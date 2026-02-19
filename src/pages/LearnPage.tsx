@@ -222,9 +222,7 @@ export default function LearnPage() {
     });
   }, []);
 
-  const tutorialLessons = useMemo(() => {
-    return lessons;
-  }, [lessons]);
+  const tutorialLessons = useMemo(() => lessons, [lessons]);
 
   const levels = [...new Set(lessons.map((l) => l.level))];
 
@@ -254,15 +252,22 @@ export default function LearnPage() {
         {tutorialView && (
           <div className="space-y-4">
             {tutorialLessons.map((lesson) => {
-              const tutorialWords = getTutorialWords(lesson.id);
+              const tutorialWords = lesson.status === "locked" ? [] : getTutorialWords(lesson.id);
+              const tutorialStatusLabel =
+                lesson.status === "completed" ? "Tamamlandı" : lesson.status === "current" ? "Hazır" : "Kilitli";
 
               return (
                 <div key={lesson.id} className="bg-card rounded-2xl p-4 shadow-card">
                   <div className="flex items-center justify-between gap-3 mb-3">
                     <div>
-                      <h2 className="font-extrabold text-foreground">
-                        {lesson.emoji} {lesson.title}
-                      </h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="font-extrabold text-foreground">
+                          {lesson.emoji} {lesson.title}
+                        </h2>
+                        <span className="rounded-full border border-border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                          {tutorialStatusLabel}
+                        </span>
+                      </div>
                       <p className="text-xs text-muted-foreground font-semibold mt-1">
                         {lessonsData[lesson.id]?.description ?? "Bu ders için kelime pratiği"}
                       </p>
@@ -299,7 +304,11 @@ export default function LearnPage() {
                         </div>
                       ))
                     ) : (
-                      <p className="text-sm font-semibold text-muted-foreground">Kelime listesi yakında eklenecek.</p>
+                      <p className="text-sm font-semibold text-muted-foreground">
+                        {lesson.status === "locked"
+                          ? "Bu ders kilitli. Önce önceki dersleri tamamlayarak tutorial içeriğini aç."
+                          : "Kelime listesi yakında eklenecek."}
+                      </p>
                     )}
                   </div>
                 </div>
