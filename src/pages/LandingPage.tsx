@@ -41,12 +41,6 @@ export default function LandingPage() {
             Uygulamayı Aç
             <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link
-            to="/translate"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-bold transition hover:bg-muted"
-          >
-            Çeviri Aracını Dene
-          </Link>
         </div>
       </section>
 
