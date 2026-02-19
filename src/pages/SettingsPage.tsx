@@ -1,14 +1,24 @@
 import StatsBar from "../components/StatsBar";
-import { ChevronRight, Globe, Bell, Moon, Shield, UserCircle } from "lucide-react";
+import { ArrowLeft, ChevronRight, Globe, Bell, Moon, Shield, UserCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { applyDarkMode, getStoredPreferences, savePreferences } from "@/lib/preferences";
 
 export default function SettingsPage() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [preferences, setPreferences] = useState(getStoredPreferences);
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    navigate("/app/profile");
+  };
 
   useEffect(() => {
     savePreferences(preferences);
@@ -30,7 +40,10 @@ export default function SettingsPage() {
       <StatsBar />
 
       <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
-        <div>
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={handleBack} className="p-2 rounded-xl bg-muted/40 hover:bg-muted transition-colors" aria-label="Geri dön">
+            <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+          </button>
           <h1 className="text-2xl font-black text-foreground">Ayarlar</h1>
         </div>
 

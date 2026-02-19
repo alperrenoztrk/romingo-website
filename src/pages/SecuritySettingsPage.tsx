@@ -1,6 +1,6 @@
 import StatsBar from "../components/StatsBar";
 import { ArrowLeft, Shield, KeyRound } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -9,7 +9,17 @@ import { useState } from "react";
 
 export default function SecuritySettingsPage() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [security, setSecurity] = useState(getStoredSecuritySettings);
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    navigate("/app/settings");
+  };
 
   const handleSecuritySwitch = (key: "twoFactorAuth" | "loginAlerts", value: boolean) => {
     const next = { ...security, [key]: value };
@@ -40,9 +50,9 @@ export default function SecuritySettingsPage() {
 
       <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <Link to="/settings" className="p-2 rounded-xl bg-muted/40 hover:bg-muted transition-colors" aria-label="Ayarlar">
+          <button type="button" onClick={handleBack} className="p-2 rounded-xl bg-muted/40 hover:bg-muted transition-colors" aria-label="Geri dön">
             <ArrowLeft className="w-4 h-4 text-muted-foreground" />
-          </Link>
+          </button>
           <div>
             <h1 className="text-2xl font-black text-foreground">Gizlilik ve Güvenlik</h1>
             <p className="text-sm font-semibold text-muted-foreground mt-1">Şifre ve hesap koruma ayarlarını yönet.</p>

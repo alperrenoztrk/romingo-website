@@ -1,7 +1,7 @@
 import StatsBar from "../components/StatsBar";
 import { ArrowLeft, Save, UserCircle } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -9,7 +9,17 @@ import { getStoredProfileSettings, saveProfileSettings } from "@/lib/account";
 
 export default function ProfileSettingsPage() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(getStoredProfileSettings);
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    navigate("/app/settings");
+  };
 
   const handleSave = () => {
     saveProfileSettings(profile);
@@ -26,9 +36,9 @@ export default function ProfileSettingsPage() {
 
       <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <Link to="/settings" className="p-2 rounded-xl bg-muted/40 hover:bg-muted transition-colors" aria-label="Ayarlar">
+          <button type="button" onClick={handleBack} className="p-2 rounded-xl bg-muted/40 hover:bg-muted transition-colors" aria-label="Geri dön">
             <ArrowLeft className="w-4 h-4 text-muted-foreground" />
-          </Link>
+          </button>
           <div>
             <h1 className="text-2xl font-black text-foreground">Profil Bilgileri</h1>
             <p className="text-sm font-semibold text-muted-foreground mt-1">Ad, kullanıcı adı ve avatar bilgilerini düzenle.</p>
