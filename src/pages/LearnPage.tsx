@@ -19,33 +19,12 @@ interface Lesson {
 
 const levelColors = ["gradient-success", "gradient-sky", "gradient-hero", "gradient-gold"];
 
-interface TutorialWord {
-  tr: string;
-  ro: string;
+interface TutorialItem {
+  primaryText: string;
+  secondaryText: string;
+  speechText?: string;
+  speechLang?: string;
 }
-
-const numberTutorialWords: TutorialWord[] = [
-  { tr: "Bir", ro: "Unu" },
-  { tr: "İki", ro: "Doi" },
-  { tr: "Üç", ro: "Trei" },
-  { tr: "Dört", ro: "Patru" },
-  { tr: "Beş", ro: "Cinci" },
-  { tr: "Altı", ro: "Șase" },
-  { tr: "Yedi", ro: "Șapte" },
-  { tr: "Sekiz", ro: "Opt" },
-  { tr: "Dokuz", ro: "Nouă" },
-  { tr: "On", ro: "Zece" },
-  { tr: "On bir", ro: "Unsprezece" },
-  { tr: "On iki", ro: "Doisprezece" },
-  { tr: "On üç", ro: "Treisprezece" },
-  { tr: "On dört", ro: "Paisprezece" },
-  { tr: "On beş", ro: "Cincisprezece" },
-  { tr: "On altı", ro: "Șaisprezece" },
-  { tr: "On yedi", ro: "Șaptesprezece" },
-  { tr: "On sekiz", ro: "Optsprezece" },
-  { tr: "On dokuz", ro: "Nouăsprezece" },
-  { tr: "Yirmi", ro: "Douăzeci" },
-];
 
 const dayOrder = [
   "pazartesi",
@@ -76,45 +55,70 @@ function getDaySortKey(text: string) {
   return { group: 2, order: Number.MAX_SAFE_INTEGER };
 }
 
-function getTutorialWords(lessonId: string): TutorialWord[] {
-  if (lessonId === "3") {
-    return numberTutorialWords;
-  }
-
+function getTutorialWords(lessonId: string): TutorialItem[] {
   const lesson = lessonsData[lessonId];
   if (!lesson) return [];
 
-  const wordMap = new Map<string, TutorialWord>();
+  const tutorialItems: TutorialItem[] = [];
 
   lesson.exercises.forEach((exercise) => {
-    if (exercise.type === "matching") {
-      exercise.pairs.forEach((pair) => {
-        const tr = pair.left.trim();
-        const ro = pair.right.trim();
-        if (tr && ro) {
-          wordMap.set(`${tr}-${ro}`.toLocaleLowerCase("tr-TR"), { tr, ro });
-        }
+    if (exercise.type === "multiple_choice") {
+      tutorialItems.push({
+        primaryText: exercise.question.trim(),
+        secondaryText: `Şıklar: ${exercise.options.join(" • ")}`,
       });
+      return;
+    }
+
+    if (exercise.type === "fill_blank") {
+      tutorialItems.push({
+        primaryText: exercise.sentence.trim(),
+        secondaryText: `Doğru cevap: ${exercise.correctAnswer.trim()}`,
+      });
+      return;
     }
 
     if (exercise.type === "translation") {
-      const isTrToRo = exercise.direction === "tr-ro";
-      const tr = (isTrToRo ? exercise.sentence : exercise.correctAnswer).trim();
-      const ro = (isTrToRo ? exercise.correctAnswer : exercise.sentence).trim();
+      const sentence = exercise.sentence.trim();
+      const answer = exercise.correctAnswer.trim();
+      tutorialItems.push({
+        primaryText: sentence,
+        secondaryText: `Çeviri: ${answer}`,
+        speechText: exercise.direction === "tr-ro" ? answer : sentence,
+        speechLang: "ro-RO",
+      });
+      return;
+    }
 
-      if (tr && ro) {
-        wordMap.set(`${tr}-${ro}`.toLocaleLowerCase("tr-TR"), { tr, ro });
-      }
+    if (exercise.type === "listening") {
+      tutorialItems.push({
+        primaryText: `Dinleme: ${exercise.word.trim()}`,
+        secondaryText: `Şıklar: ${exercise.options.join(" • ")}`,
+        speechText: exercise.word.trim(),
+        speechLang: "ro-RO",
+      });
+      return;
+    }
+
+    if (exercise.type === "matching") {
+      exercise.pairs.forEach((pair) => {
+        tutorialItems.push({
+          primaryText: pair.left.trim(),
+          secondaryText: pair.right.trim(),
+          speechText: pair.right.trim(),
+          speechLang: "ro-RO",
+        });
+      });
     }
   });
 
-  const tutorialWords = Array.from(wordMap.values());
+  const tutorialWords = tutorialItems.filter((item) => item.primaryText && item.secondaryText);
 
   if (lessonId === "10") {
     return tutorialWords
       .sort((a, b) => {
-        const aKey = getDaySortKey(a.tr);
-        const bKey = getDaySortKey(b.tr);
+        const aKey = getDaySortKey(a.primaryText);
+        const bKey = getDaySortKey(b.primaryText);
 
         if (aKey.group !== bKey.group) {
           return aKey.group - bKey.group;
@@ -124,7 +128,7 @@ function getTutorialWords(lessonId: string): TutorialWord[] {
           return aKey.order - bKey.order;
         }
 
-        return a.tr.localeCompare(b.tr, "tr-TR");
+        return a.primaryText.localeCompare(b.primaryText, "tr-TR");
       })
       .slice(0, 12);
   }
@@ -274,21 +278,23 @@ export default function LearnPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {tutorialWords.length > 0 ? (
-                      tutorialWords.map((word) => (
-                        <div key={`${lesson.id}-${word.tr}-${word.ro}`} className="rounded-xl bg-muted/60 p-3">
+                      tutorialWords.map((word, index) => (
+                        <div key={`${lesson.id}-${index}-${word.primaryText}`} className="rounded-xl bg-muted/60 p-3">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-sm font-bold text-foreground">{word.tr}</p>
+                            <p className="text-sm font-bold text-foreground">{word.primaryText}</p>
                           </div>
                           <div className="mt-1 flex items-center justify-between gap-2">
-                            <p className="text-xs font-semibold text-muted-foreground">{word.ro}</p>
-                            <button
-                              type="button"
-                              aria-label={`${word.ro} cümlesini dinle`}
-                              onClick={() => speakText(word.ro, "ro-RO")}
-                              className="p-1.5 rounded-lg bg-card text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
-                            >
-                              <Volume2 className="w-4 h-4" />
-                            </button>
+                            <p className="text-xs font-semibold text-muted-foreground">{word.secondaryText}</p>
+                            {word.speechText && word.speechLang && (
+                              <button
+                                type="button"
+                                aria-label={`${word.speechText} cümlesini dinle`}
+                                onClick={() => speakText(word.speechText, word.speechLang)}
+                                className="p-1.5 rounded-lg bg-card text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
+                              >
+                                <Volume2 className="w-4 h-4" />
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))
