@@ -2,11 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { applyDarkMode, getStoredPreferences } from "@/lib/preferences";
 import BottomNav from "./components/BottomNav";
 import HomePage from "./pages/HomePage";
+import LandingPage from "./pages/LandingPage";
 import LearnPage from "./pages/LearnPage";
 import ShopPage from "./pages/ShopPage";
 import LeaguePage from "./pages/LeaguePage";
@@ -28,7 +29,8 @@ const SESSION_KEY = "romingo_session_mode";
 
 function AppContent() {
   const location = useLocation();
-  const hideNav = location.pathname.startsWith("/lesson/");
+  const isAppRoute = location.pathname === "/app" || location.pathname.startsWith("/app/");
+  const hideNav = location.pathname.startsWith("/app/lesson/");
   const [sessionMode, setSessionMode] = useState<SessionMode>("authenticated");
   const [showSplash, setShowSplash] = useState(true);
 
@@ -60,7 +62,7 @@ function AppContent() {
     localStorage.setItem(SESSION_KEY, "guest");
   };
 
-  if (showSplash) {
+  if (isAppRoute && showSplash) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-b from-pink-100 via-pink-200 to-rose-300 dark:from-slate-900 dark:via-fuchsia-950 dark:to-rose-950">
         <div className="text-center">
@@ -71,27 +73,37 @@ function AppContent() {
     );
   }
 
-  if (sessionMode === "logged_out") {
+  if (isAppRoute && sessionMode === "logged_out") {
     return <LoginPage onGuestLogin={handleGuestLogin} />;
   }
 
   return (
     <div className="min-h-screen bg-background">
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/learn" element={<LearnPage />} />
-        <Route path="/shop" element={<ShopPage />} />
-        <Route path="/league" element={<LeaguePage />} />
-        <Route path="/profile" element={<ProfilePage isGuest={sessionMode === "guest"} onLogout={handleLogout} />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/settings/profile" element={<ProfileSettingsPage />} />
-        <Route path="/settings/security" element={<SecuritySettingsPage />} />
-        <Route path="/settings/daily-goals" element={<DailyGoalsSettingsPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/translate" element={<TranslationPage />} />
-        <Route path="/lesson/:id" element={<LessonPage />} />
+        <Route path="/app" element={<HomePage />} />
+        <Route path="/app/learn" element={<LearnPage />} />
+        <Route path="/app/shop" element={<ShopPage />} />
+        <Route path="/app/league" element={<LeaguePage />} />
+        <Route path="/app/profile" element={<ProfilePage isGuest={sessionMode === "guest"} onLogout={handleLogout} />} />
+        <Route path="/app/settings" element={<SettingsPage />} />
+        <Route path="/app/settings/profile" element={<ProfileSettingsPage />} />
+        <Route path="/app/settings/security" element={<SecuritySettingsPage />} />
+        <Route path="/app/settings/daily-goals" element={<DailyGoalsSettingsPage />} />
+        <Route path="/app/lesson/:id" element={<LessonPage />} />
+        <Route path="/learn" element={<Navigate to="/app/learn" replace />} />
+        <Route path="/shop" element={<Navigate to="/app/shop" replace />} />
+        <Route path="/league" element={<Navigate to="/app/league" replace />} />
+        <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+        <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+        <Route path="/settings/profile" element={<Navigate to="/app/settings/profile" replace />} />
+        <Route path="/settings/security" element={<Navigate to="/app/settings/security" replace />} />
+        <Route path="/settings/daily-goals" element={<Navigate to="/app/settings/daily-goals" replace />} />
+        <Route path="/lesson/:id" element={<Navigate to="/app/learn" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {!hideNav && <BottomNav />}
+      {isAppRoute && !hideNav && <BottomNav />}
     </div>
   );
 }
