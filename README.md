@@ -1,73 +1,117 @@
-# Welcome to your Lovable project
+# Romingo Website
 
-## Project info
+Romingo, kelime-pratik, çeviri ve ilerleme takibi odaklı bir dil öğrenme web uygulamasıdır. Bu repoda React + TypeScript tabanlı istemci uygulaması bulunur.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Hızlı Başlangıç (5 dakika)
 
-## How can I edit this code?
+### 1) Gereksinimler
+- Node.js **18+** (öneri: LTS)
+- npm **9+**
 
-There are several ways of editing your application.
+Sürümleri kontrol edin:
 
-**Use Lovable**
+```bash
+node -v
+npm -v
+```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### 2) Projeyi çalıştırın
 
-Changes made via Lovable will be committed automatically to this repo.
+```bash
+# bağımlılıkları yükle
+npm install
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# geliştirme sunucusunu başlat
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Ardından tarayıcıdan Vite’ın verdiği adresi açın (genellikle `http://localhost:5173`).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## Detaylı Geliştirici Tutorialı
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Proje komutları
 
-## What technologies are used for this project?
+```bash
+# geliştirme
+npm run dev
 
-This project is built with:
+# production build
+npm run build
+
+# development modunda build
+npm run build:dev
+
+# build çıktısını lokal önizle
+npm run preview
+
+# linter
+npm run lint
+
+# testleri tek sefer çalıştır
+npm run test
+
+# testleri watch modunda çalıştır
+npm run test:watch
+```
+
+### Önerilen günlük workflow
+1. `npm run dev` ile yerelde geliştirme yapın.
+2. Değişiklikten sonra `npm run lint` çalıştırın.
+3. Sonrasında `npm run test` ile regresyon kontrolü yapın.
+4. Son olarak gerekiyorsa `npm run build` alarak production derlemesini doğrulayın.
+
+---
+
+## Proje Yapısı (kısa özet)
+
+- `src/pages/`: Sayfa bileşenleri (Home, Learn, Profile, Settings vb.).
+- `src/components/`: UI ve domain bileşenleri.
+- `src/components/ui/`: shadcn tabanlı yeniden kullanılabilir UI parçaları.
+- `src/lib/`: İş kuralları, yardımcı fonksiyonlar ve test edilen utility modülleri.
+- `src/data/`: Ders/veri katalogları.
+- `src/test/`: Test altyapısı ve ortak test ayarları.
+
+---
+
+## Sık Karşılaşılan Problemler
+
+### Port çakışması
+`5173` doluysa Vite farklı port verebilir. Terminal çıktısındaki URL’i kullanın.
+
+### Node sürümü uyumsuzluğu
+Eski Node sürümlerinde bağımlılık kurulumu veya build aşaması hata verebilir. Node LTS’e geçin.
+
+### Temiz kurulum
+Sorun devam ediyorsa:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+---
+
+## Teknoloji Yığını
 
 - Vite
+- React 18
 - TypeScript
-- React
-- shadcn-ui
 - Tailwind CSS
+- shadcn/ui
+- Vitest + Testing Library
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## Katkı Notu
 
-## Can I connect a custom domain to my Lovable project?
+PR açmadan önce minimum olarak şunları çalıştırmanız önerilir:
 
-Yes, you can!
+```bash
+npm run lint
+npm run test
+npm run build
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Bu adım, stil/kalite hatalarını ve olası kırılmaları erken yakalamanıza yardımcı olur.
