@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { applyDarkMode, getStoredPreferences } from "@/lib/preferences";
 import BottomNav from "./components/BottomNav";
@@ -22,6 +22,12 @@ import SecuritySettingsPage from "./pages/SecuritySettingsPage";
 import DailyGoalsSettingsPage from "./pages/DailyGoalsSettingsPage";
 
 const queryClient = new QueryClient();
+
+function LegacyLessonRedirect() {
+  const { id } = useParams<{ id: string }>();
+  return <Navigate to={id ? `/app/lesson/${id}` : "/app/learn"} replace />;
+}
+
 
 type SessionMode = "authenticated" | "logged_out" | "guest";
 
@@ -100,7 +106,7 @@ function AppContent() {
         <Route path="/settings/profile" element={<Navigate to="/app/settings/profile" replace />} />
         <Route path="/settings/security" element={<Navigate to="/app/settings/security" replace />} />
         <Route path="/settings/daily-goals" element={<Navigate to="/app/settings/daily-goals" replace />} />
-        <Route path="/lesson/:id" element={<Navigate to="/app/learn" replace />} />
+        <Route path="/lesson/:id" element={<LegacyLessonRedirect />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {isAppRoute && !hideNav && <BottomNav />}

@@ -142,7 +142,7 @@ function LessonNode({ lesson, index }: { lesson: Lesson; index: number }) {
   const offset = index % 2 === 0 ? -30 : 30;
 
   const handleClick = () => {
-    if (!isLocked) navigate(`/lesson/${lesson.id}`);
+    if (!isLocked) navigate(`/app/lesson/${lesson.id}`);
   };
 
   return (
@@ -265,7 +265,7 @@ export default function LearnPage() {
                     </div>
                     <button
                       disabled={lesson.status === "locked"}
-                      onClick={() => navigate(`/lesson/${lesson.id}`)}
+                      onClick={() => navigate(`/app/lesson/${lesson.id}`)}
                       className="gradient-sky shadow-button-sky rounded-xl px-3 py-2 text-xs font-extrabold text-primary-foreground active:translate-y-1 active:shadow-none transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {lesson.status === "locked" ? "Kilitli" : "Derse Git"}
