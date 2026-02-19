@@ -28,6 +28,11 @@ function LegacyLessonRedirect() {
   return <Navigate to={id ? `/app/lesson/${id}` : "/app/learn"} replace />;
 }
 
+function LegacyLearnRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/app/learn${search}`} replace />;
+}
+
 
 type SessionMode = "authenticated" | "logged_out" | "guest";
 
@@ -98,7 +103,7 @@ function AppContent() {
         <Route path="/app/settings/security" element={<SecuritySettingsPage />} />
         <Route path="/app/settings/daily-goals" element={<DailyGoalsSettingsPage />} />
         <Route path="/app/lesson/:id" element={<LessonPage />} />
-        <Route path="/learn" element={<Navigate to="/app/learn" replace />} />
+        <Route path="/learn" element={<LegacyLearnRedirect />} />
         <Route path="/shop" element={<Navigate to="/app/shop" replace />} />
         <Route path="/league" element={<Navigate to="/app/league" replace />} />
         <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
