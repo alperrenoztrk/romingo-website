@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import StatsBar from "../components/StatsBar";
-import { Crown, Medal, Award, ArrowUpCircle, ArrowDownCircle, MinusCircle, Shuffle } from "lucide-react";
+import { Crown, Medal, Award, ArrowUpCircle, ArrowDownCircle, MinusCircle } from "lucide-react";
 import { addLeagueXp, getLeagueMeta, getLeagueState, getRankedLeaguePlayers, getTimeUntilReset } from "@/lib/league";
 
 function getRankIcon(rank: number) {
@@ -66,10 +66,7 @@ export default function LeaguePage() {
           </span>
         </div>
 
-        <div className="bg-card rounded-2xl p-3 shadow-card mb-6 flex items-center justify-between">
-          <p className="text-xs font-bold text-muted-foreground flex items-center gap-1">
-            <Shuffle className="w-4 h-4" /> Bu hafta yeni bir grupla eşleştirildin.
-          </p>
+        <div className="bg-card rounded-2xl p-3 shadow-card mb-6 flex items-center justify-end">
           <button
             type="button"
             className="text-xs font-black text-flamingo"
