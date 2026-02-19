@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Globe2, Trophy, WandSparkles, ArrowRight, Pause, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -129,6 +129,7 @@ const features: TutorialFeature[] = [
 function TutorialFlowPlayer({ steps }: { steps: TutorialStep[] }) {
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const current = useMemo(() => steps[index], [steps, index]);
 
@@ -139,10 +140,82 @@ function TutorialFlowPlayer({ steps }: { steps: TutorialStep[] }) {
 
     const timer = window.setInterval(() => {
       setIndex((prev) => (prev + 1) % steps.length);
-    }, 4000);
+    }, 7000);
 
     return () => window.clearInterval(timer);
   }, [isPlaying, steps.length]);
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) {
+      return;
+    }
+
+    let animationFrame: number | null = null;
+    let isStopped = false;
+
+    const animateScroll = () => {
+      if (isStopped) {
+        return;
+      }
+
+      const frameWindow = iframe.contentWindow;
+      const frameDocument = frameWindow?.document;
+      if (!frameWindow || !frameDocument) {
+        return;
+      }
+
+      const body = frameDocument.body;
+      const html = frameDocument.documentElement;
+      const maxScroll = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight,
+      ) - frameWindow.innerHeight;
+
+      frameWindow.scrollTo({ top: 0, behavior: "auto" });
+
+      if (maxScroll <= 0) {
+        return;
+      }
+
+      const duration = 5500;
+      const start = performance.now();
+
+      const step = (timestamp: number) => {
+        if (isStopped) {
+          return;
+        }
+
+        const elapsed = timestamp - start;
+        const progress = Math.min(elapsed / duration, 1);
+        frameWindow.scrollTo({ top: maxScroll * progress, behavior: "auto" });
+
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(step);
+        }
+      };
+
+      animationFrame = requestAnimationFrame(step);
+    };
+
+    const onLoad = () => {
+      animateScroll();
+    };
+
+    iframe.addEventListener("load", onLoad);
+    animateScroll();
+
+    return () => {
+      isStopped = true;
+      iframe.removeEventListener("load", onLoad);
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [current.path]);
 
   return (
     <div className="space-y-4">
@@ -171,6 +244,7 @@ function TutorialFlowPlayer({ steps }: { steps: TutorialStep[] }) {
 
       <div className="overflow-hidden rounded-lg border border-border bg-card">
         <iframe
+          ref={iframeRef}
           title={current.title}
           src={current.path}
           className="h-[360px] w-full"
