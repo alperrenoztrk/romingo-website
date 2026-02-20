@@ -1,0 +1,13 @@
+<svg width="460" height="220" viewBox="0 0 460 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(80 26)">
+    <polygon points="30,22 120,22 154,56 64,56" fill="#17479D" />
+    <polygon points="120,22 189,22 223,56 154,56" fill="#F6DF1E" />
+    <polygon points="154,56 223,56 257,90 188,90" fill="#EC1C24" />
+    <polygon points="188,90 257,90 257,152 188,152" fill="#EC1C24" />
+  </g>
+
+  <text x="50" y="155" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700" letter-spacing="0.5">
+    <tspan fill="#D90429">Romi</tspan><tspan fill="#0038A8">ngo</tspan>
+  </text>
+  <text x="69" y="191" fill="#1F2937" font-family="Arial, Helvetica, sans-serif" font-size="20" letter-spacing="9">LANGUAGE SCHOOL</text>
+</svg>

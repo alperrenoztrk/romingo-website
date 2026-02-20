@@ -276,6 +276,7 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <section className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-6 pb-20 pt-16 text-center">
+        <img src="/romingo-logo.svg" alt="Romingo logosu" className="h-24 w-auto" />
         <p className="rounded-full border border-border bg-card px-4 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
           Romingo ile dil öğrenmeyi eğlenceli hale getir
         </p>

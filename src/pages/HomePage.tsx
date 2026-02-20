@@ -177,11 +177,11 @@ export default function HomePage() {
           <button
             type="button"
             onClick={() => setFlamingoRotation((currentRotation) => currentRotation + 360)}
-            className="text-5xl leading-none transition-transform duration-700 ease-out active:scale-95"
+            className="transition-transform duration-700 ease-out active:scale-95"
             style={{ transform: `rotate(${flamingoRotation}deg)` }}
-            aria-label="Flamingoyu döndür"
+            aria-label="Logoyu döndür"
           >
-            🦩
+            <img src="/romingo-logo.svg" alt="Romingo logosu" className="h-14 w-auto" />
           </button>
           <div>
             <h1 className="text-2xl font-black text-foreground">{greeting}!</h1>
